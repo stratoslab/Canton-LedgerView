@@ -15,8 +15,8 @@ import {
     fetchCantonScanPriceHistory,
     fetchCantonScanValidators,
 } from '../services/scanClient';
-import { useScanStore } from '../services/store';
-import type { ScanDomainEntry, ScanUpdateSummary } from '../types/scan';
+import { useScanStore, useLedgerStore } from '../services/store';
+import type { ScanDomainEntry, ScanUpdateSummary, ScanScansResponse, ScanUpdatesResponse } from '../types/scan';
 import type {
     CantonScanStatsResponse,
     CantonScanPriceResponse,
@@ -107,42 +107,69 @@ export function ScanExplorer() {
         setError(null);
 
         try {
-            const [
-                scansResponse,
-                updatesResponse,
-                statsResponse,
-                priceResponse,
-                cantonUpdates,
-                activityResponse,
-                priceHistoryResponse,
-                validatorsResponse,
-            ] = await Promise.all([
+            const results = await Promise.allSettled([
                 scanClient.getScans(),
                 scanClient.getUpdates(12),
-                fetchCantonScanStats() as Promise<CantonScanStatsResponse>,
-                fetchCantonScanPrice() as Promise<CantonScanPriceResponse>,
-                fetchCantonScanUpdates(6) as Promise<CantonScanUpdatesResponse>,
-                fetchCantonScanActivityHistory(activityPeriod) as Promise<{ data: CantonScanActivityHistoryEntry[] }>,
-                fetchCantonScanPriceHistory(pricePeriod) as Promise<{ data: CantonScanPriceHistoryEntry[] }>,
-                fetchCantonScanValidators(validatorsPeriod) as Promise<CantonScanValidatorsResponse>,
+                fetchCantonScanStats(),
+                fetchCantonScanPrice(),
+                fetchCantonScanUpdates(6),
+                fetchCantonScanActivityHistory(activityPeriod),
+                fetchCantonScanPriceHistory(pricePeriod),
+                fetchCantonScanValidators(validatorsPeriod),
             ]);
-            setScans(scansResponse.scans || []);
-            setUpdates(updatesResponse.transactions || []);
-            setStats(statsResponse);
-            setPrice(priceResponse);
-            setCantonScanUpdates(cantonUpdates);
-            setActivityHistory(activityResponse?.data || []);
-            setPriceHistory(priceHistoryResponse?.data || []);
-            const validatorList = Array.isArray(validatorsResponse)
-                ? validatorsResponse
-                : validatorsResponse.data || validatorsResponse.validators || [];
+
+            // Helper to get value or default
+            const getVal = <T,>(result: PromiseSettledResult<T>, defaultVal: T): T =>
+                result.status === 'fulfilled' ? result.value : defaultVal;
+
+            const scansRes = getVal<ScanScansResponse>(results[0] as PromiseSettledResult<ScanScansResponse>, { scans: [] });
+            setScans(scansRes.scans || []);
+
+            const updatesRes = getVal<ScanUpdatesResponse>(results[1] as PromiseSettledResult<ScanUpdatesResponse>, { transactions: [] });
+            setUpdates(updatesRes.transactions || []);
+
+            setStats(getVal<CantonScanStatsResponse | null>(results[2] as PromiseSettledResult<CantonScanStatsResponse>, null));
+            setPrice(getVal<CantonScanPriceResponse | null>(results[3] as PromiseSettledResult<CantonScanPriceResponse>, null));
+            setCantonScanUpdates(getVal<CantonScanUpdatesResponse | null>(results[4] as PromiseSettledResult<CantonScanUpdatesResponse>, null));
+
+            const activityRes = getVal<{ data: CantonScanActivityHistoryEntry[] }>(results[5] as PromiseSettledResult<{ data: CantonScanActivityHistoryEntry[] }>, { data: [] });
+            setActivityHistory(activityRes.data || []);
+
+            const priceHistRes = getVal<{ data: CantonScanPriceHistoryEntry[] }>(results[6] as PromiseSettledResult<{ data: CantonScanPriceHistoryEntry[] }>, { data: [] });
+            setPriceHistory(priceHistRes.data || []);
+
+            const validatorsRes = getVal<CantonScanValidatorsResponse>(results[7] as PromiseSettledResult<CantonScanValidatorsResponse>, { validators: [] } as any);
+            const validatorList = Array.isArray(validatorsRes)
+                ? validatorsRes
+                : (validatorsRes as any).data || (validatorsRes as any).validators || [];
             setValidators(validatorList);
+
+            // Check if essential Scan API failed (first 2)
+            if (results[0].status === 'rejected' && results[1].status === 'rejected') {
+                throw new Error('Could not connect to Scan API. Please check your network or URL.');
+            }
+
         } catch (err) {
+            console.error('Explorer data fetch error:', err);
             setError(err instanceof Error ? err.message : 'Failed to fetch Scan data');
         } finally {
             setIsLoading(false);
         }
     };
+
+    // Force fix for broken URL using the hook action
+    useEffect(() => {
+        if (scanConfig.url === 'https://scan.bs.amulet.global/api/scan') {
+            refreshScanData();
+            // Use store directly to update config persistantly
+            useLedgerStore.getState().setScanConfig(
+                'https://scan.sv-1.global.canton.network.sync.global/api/scan',
+                scanConfig.memberId
+            );
+            // Trigger a reload after fix to ensure fresh state
+            window.location.reload();
+        }
+    }, [scanConfig.url, scanConfig.memberId]);
 
     useEffect(() => {
         refreshScanData();
