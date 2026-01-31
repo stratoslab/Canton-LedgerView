@@ -25,18 +25,22 @@ import { useUI, useConnection, usePartyLens } from '../services/store';
 import PartySelector from './PartySelector';
 
 const navItems = [
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/contracts', label: 'Contracts', icon: FileText },
-  { path: '/transactions', label: 'Transactions', icon: Activity },
-  { path: '/templates', label: 'Templates', icon: Package },
-  { path: '/explorer', label: 'Scan Explorer', icon: Globe },
-  { path: '/health', label: 'Node Health', icon: HeartPulse },
+  { path: '/', label: 'Dashboard', icon: LayoutDashboard, requiresConnection: true },
+  { path: '/contracts', label: 'Contracts', icon: FileText, requiresConnection: true },
+  { path: '/transactions', label: 'Transactions', icon: Activity, requiresConnection: true },
+  { path: '/templates', label: 'Templates', icon: Package, requiresConnection: true },
+  { path: '/explorer', label: 'Scan Explorer', icon: Globe, requiresConnection: false },
+  { path: '/health', label: 'Node Health', icon: HeartPulse, requiresConnection: true },
 ];
 
 export function Sidebar() {
   const { sidebarOpen, toggleSidebar } = useUI();
   const { status, disconnect } = useConnection();
   const { activeParty } = usePartyLens();
+
+  const visibleNavItems = navItems.filter(
+    (item) => !item.requiresConnection || status.connected
+  );
 
   return (
     <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
@@ -68,7 +72,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="sidebar-nav">
-        {navItems.map(({ path, label, icon: Icon }) => (
+        {visibleNavItems.map(({ path, label, icon: Icon }) => (
           <NavLink
             key={path}
             to={path}
