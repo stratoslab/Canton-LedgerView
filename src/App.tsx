@@ -14,6 +14,7 @@ import ContractsBrowser from './pages/ContractsBrowser';
 import Transactions from './pages/Transactions';
 import Templates from './pages/Templates';
 import NodeHealth from './pages/NodeHealth';
+import ScanExplorer from './pages/ScanExplorer';
 import './index.css';
 
 /**
@@ -71,6 +72,7 @@ export function App() {
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="transactions/:updateId" element={<div>Transaction Detail (TODO)</div>} />
                     <Route path="templates" element={<Templates />} />
+                    <Route path="explorer" element={<ScanExplorer />} />
                     <Route path="health" element={<NodeHealth />} />
                     <Route path="settings" element={<div>Settings (TODO)</div>} />
                 </Route>

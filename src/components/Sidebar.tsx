@@ -14,6 +14,7 @@ import {
     FileText,
     Activity,
     Package,
+    Globe,
     HeartPulse,
     Settings,
     ChevronLeft,
@@ -28,6 +29,7 @@ const navItems = [
     { path: '/contracts', label: 'Contracts', icon: FileText },
     { path: '/transactions', label: 'Transactions', icon: Activity },
     { path: '/templates', label: 'Templates', icon: Package },
+    { path: '/explorer', label: 'Scan Explorer', icon: Globe },
     { path: '/health', label: 'Node Health', icon: HeartPulse },
 ];
 

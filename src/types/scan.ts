@@ -82,3 +82,38 @@ export interface OpenAndIssuingMiningRoundsResponse {
     open_mining_rounds: Record<ContractId, MiningRoundEntry<OpenMiningRoundPayload>>;
     issuing_mining_rounds: Record<ContractId, MiningRoundEntry<IssuingMiningRoundPayload>>;
 }
+
+// ============================================================================
+// Scan Connectivity
+// ============================================================================
+
+export interface ScanEndpoint {
+    publicUrl: string;
+    svName: string;
+}
+
+export interface ScanDomainEntry {
+    domainId: string;
+    scans: ScanEndpoint[];
+}
+
+export interface ScanScansResponse {
+    scans: ScanDomainEntry[];
+}
+
+// ============================================================================
+// Update History
+// ============================================================================
+
+export interface ScanUpdateSummary {
+    update_id: string;
+    record_time: string;
+    migration_id: number;
+    synchronizer_id: string;
+    root_event_ids: string[];
+    events_by_id: Record<string, { template_id?: string; event_type?: string; choice?: string }>;
+}
+
+export interface ScanUpdatesResponse {
+    transactions: ScanUpdateSummary[];
+}

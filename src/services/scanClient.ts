@@ -8,6 +8,8 @@
 import type {
     MemberTrafficResponse,
     OpenAndIssuingMiningRoundsResponse,
+    ScanUpdatesResponse,
+    ScanScansResponse,
 } from '../types/scan';
 
 export class ScanClient {
@@ -55,8 +57,65 @@ export class ScanClient {
             })
         });
     }
+
+    /**
+     * List approved SV scan endpoints.
+     */
+    async getScans(): Promise<ScanScansResponse> {
+        return this.request<ScanScansResponse>('/v0/scans');
+    }
+
+    /**
+     * Fetch update history (paged).
+     */
+    async getUpdates(pageSize = 10): Promise<ScanUpdatesResponse> {
+        return this.request<ScanUpdatesResponse>('/v2/updates', {
+            method: 'POST',
+            body: JSON.stringify({ page_size: pageSize }),
+        });
+    }
 }
 
 export function createScanClient(baseUrl: string): ScanClient {
     return new ScanClient(baseUrl);
+}
+
+// ============================================================================
+// CantonScan client (public explorer API)
+// ============================================================================
+
+const CANTON_SCAN_BASE_URL = 'https://www.cantonscan.com';
+
+async function cantonScanRequest<T>(path: string): Promise<T> {
+    const response = await fetch(`${CANTON_SCAN_BASE_URL}${path}`);
+
+    if (!response.ok) {
+        throw new Error(`CantonScan API Error (${response.status}): ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+export function fetchCantonScanStats() {
+    return cantonScanRequest('/api/stats');
+}
+
+export function fetchCantonScanPrice() {
+    return cantonScanRequest('/api/price/cc');
+}
+
+export function fetchCantonScanActivityHistory(period: '24h' | '7d' | '1m') {
+    return cantonScanRequest(`/api/activity-history?period=${period}`);
+}
+
+export function fetchCantonScanPriceHistory(period: '24h' | '7d' | '1m') {
+    return cantonScanRequest(`/api/price-history?period=${period}`);
+}
+
+export function fetchCantonScanUpdates(limit = 10) {
+    return cantonScanRequest(`/api/updates?limit=${limit}`);
+}
+
+export function fetchCantonScanValidators(interval: '24h' | '7d' | '1m') {
+    return cantonScanRequest(`/api/validators?interval=${interval}`);
 }

@@ -8,8 +8,8 @@
  */
 
 import { useState } from 'react';
-import { Server, Key, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import { useConnection } from '../services/store';
+import { Server, Key, AlertCircle, CheckCircle, Loader2, Globe } from 'lucide-react';
+import { useConnection, useScanStore } from '../services/store';
 
 interface ConnectionFormProps {
     onConnected?: () => void;
@@ -17,8 +17,11 @@ interface ConnectionFormProps {
 
 export function ConnectionForm({ onConnected }: ConnectionFormProps) {
     const { status, connect } = useConnection();
+    const { scanConfig, setScanConfig } = useScanStore();
     const [endpoint, setEndpoint] = useState('http://localhost:7575');
     const [authToken, setAuthToken] = useState('');
+    const [scanUrl, setScanUrl] = useState(scanConfig.url);
+    const [memberId, setMemberId] = useState(scanConfig.memberId);
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +31,9 @@ export function ConnectionForm({ onConnected }: ConnectionFormProps) {
         setIsConnecting(true);
 
         try {
+            if (scanUrl.trim()) {
+                setScanConfig(scanUrl.trim(), memberId.trim());
+            }
             const success = await connect({
                 endpoint,
                 authToken: authToken || undefined,
@@ -94,6 +100,43 @@ export function ConnectionForm({ onConnected }: ConnectionFormProps) {
                                 value={authToken}
                                 onChange={(e) => setAuthToken(e.target.value)}
                                 placeholder="Bearer token (if required)"
+                                className="input"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="input-group">
+                        <label htmlFor="scan-url" className="input-label">
+                            Global Sync Scan API
+                        </label>
+                        <div className="input-with-icon">
+                            <Globe className="input-icon" size={18} />
+                            <input
+                                id="scan-url"
+                                type="url"
+                                value={scanUrl}
+                                onChange={(e) => setScanUrl(e.target.value)}
+                                placeholder="https://scan.sv-1.global.canton.network.sync.global/api/scan"
+                                className="input"
+                            />
+                        </div>
+                        <p className="input-hint">
+                            Use the Scan API base URL (include /api/scan).
+                        </p>
+                    </div>
+
+                    <div className="input-group">
+                        <label htmlFor="member-id" className="input-label">
+                            Global Sync Member ID (Optional)
+                        </label>
+                        <div className="input-with-icon">
+                            <Globe className="input-icon" size={18} />
+                            <input
+                                id="member-id"
+                                type="text"
+                                value={memberId}
+                                onChange={(e) => setMemberId(e.target.value)}
+                                placeholder="Member ID for traffic status"
                                 className="input"
                             />
                         </div>
