@@ -138,7 +138,7 @@ const initialDataState: DataState = {
 
 const initialScanState: ScanState = {
     scanConfig: {
-        url: 'https://scan.bs.amulet.global/api/scan', // Default from docs
+        url: 'https://scan.sv-1.global.canton.network.sync.global/api/scan', // Default from docs
         memberId: '',
     },
     scanClient: null,
