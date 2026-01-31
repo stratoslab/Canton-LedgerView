@@ -1,0 +1,52 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Main Container -->
+  <rect x="60" y="60" width="1080" height="510" rx="20" fill="rgba(255,255,255,0.98)" stroke="rgba(255,255,255,0.1)"/>
+  
+  <!-- Canton Logo Area -->
+  <rect x="100" y="100" width="200" height="60" rx="8" fill="#000000"/>
+  <text x="200" y="135" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="600">CANTON</text>
+  
+  <!-- Title -->
+  <text x="600" y="180" text-anchor="middle" fill="#000000" font-family="Arial, sans-serif" font-size="48" font-weight="700">LedgerView</text>
+  <text x="600" y="220" text-anchor="middle" fill="#666666" font-family="Arial, sans-serif" font-size="24">Blockchain Transaction Explorer</text>
+  
+  <!-- Mock Transaction Table -->
+  <rect x="100" y="280" width="1000" height="40" fill="#000000"/>
+  <text x="120" y="305" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="600">DATE</text>
+  <text x="250" y="305" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="600">HASH</text>
+  <text x="450" y="305" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="600">FROM</text>
+  <text x="650" y="305" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="600">TO</text>
+  <text x="850" y="305" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="600">VALUE</text>
+  <text x="980" y="305" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="600">STATUS</text>
+  
+  <!-- Mock Rows -->
+  <rect x="100" y="320" width="1000" height="35" fill="#f8f9fa"/>
+  <text x="120" y="342" fill="#000000" font-family="Monaco, monospace" font-size="12">2026-01-31</text>
+  <text x="250" y="342" fill="#666666" font-family="Monaco, monospace" font-size="12">0x1a2b3c...</text>
+  <text x="450" y="342" fill="#666666" font-family="Monaco, monospace" font-size="12">0x4d5e6f...</text>
+  <text x="650" y="342" fill="#666666" font-family="Monaco, monospace" font-size="12">0x7g8h9i...</text>
+  <text x="850" y="342" fill="#000000" font-family="Arial, sans-serif" font-size="12">2.45 ETH</text>
+  <rect x="970" y="330" width="60" height="20" rx="10" fill="#c6f6d5"/>
+  <text x="1000" y="343" text-anchor="middle" fill="#22543d" font-family="Arial, sans-serif" font-size="10" font-weight="600">SUCCESS</text>
+  
+  <rect x="100" y="355" width="1000" height="35" fill="white"/>
+  <text x="120" y="377" fill="#000000" font-family="Monaco, monospace" font-size="12">2026-01-30</text>
+  <text x="250" y="377" fill="#666666" font-family="Monaco, monospace" font-size="12">0x2b3c4d...</text>
+  <text x="450" y="377" fill="#666666" font-family="Monaco, monospace" font-size="12">0x5e6f7g...</text>
+  <text x="650" y="377" fill="#666666" font-family="Monaco, monospace" font-size="12">0x8h9i0j...</text>
+  <text x="850" y="377" fill="#000000" font-family="Arial, sans-serif" font-size="12">1.23 ETH</text>
+  <rect x="970" y="365" width="60" height="20" rx="10" fill="#c6f6d5"/>
+  <text x="1000" y="378" text-anchor="middle" fill="#22543d" font-family="Arial, sans-serif" font-size="10" font-weight="600">SUCCESS</text>
+  
+  <!-- Bottom accent -->
+  <rect x="100" y="520" width="1000" height="3" fill="#000000"/>
+</svg>

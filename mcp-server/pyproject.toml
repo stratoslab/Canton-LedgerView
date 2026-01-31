@@ -1,0 +1,17 @@
+[project]
+name = "canton-ledgerview-mcp"
+version = "0.1.0"
+description = "Custom MCP server for Canton Ledgerview"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp",
+    "pydantic",
+]
+
+[project.scripts]
+ledgerview-mcp = "canton_ledgerview_mcp:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
