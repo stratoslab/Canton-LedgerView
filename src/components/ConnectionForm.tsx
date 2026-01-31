@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Server, Key, AlertCircle, CheckCircle, Loader2, Globe } from 'lucide-react';
 import { useConnection, useScanStore } from '../services/store';
 
@@ -16,6 +17,7 @@ interface ConnectionFormProps {
 }
 
 export function ConnectionForm({ onConnected }: ConnectionFormProps) {
+    const navigate = useNavigate();
     const { status, connect } = useConnection();
     const { scanConfig, setScanConfig } = useScanStore();
     const [endpoint, setEndpoint] = useState('http://localhost:7575');
@@ -49,6 +51,14 @@ export function ConnectionForm({ onConnected }: ConnectionFormProps) {
         } finally {
             setIsConnecting(false);
         }
+    };
+
+    const handleScanOnly = () => {
+        setError(null);
+        if (scanUrl.trim()) {
+            setScanConfig(scanUrl.trim(), memberId.trim());
+        }
+        navigate('/explorer');
     };
 
     return (
@@ -173,6 +183,15 @@ export function ConnectionForm({ onConnected }: ConnectionFormProps) {
                         'Connect'
                     )}
                 </button>
+
+                <button
+                    type="button"
+                    className="btn btn-secondary btn-lg scan-only-button"
+                    onClick={handleScanOnly}
+                    disabled={!scanUrl.trim()}
+                >
+                    Continue with Global Sync only
+                </button>
             </form>
 
             <style>{`
@@ -294,6 +313,13 @@ export function ConnectionForm({ onConnected }: ConnectionFormProps) {
         
         .connect-button:active:not(:disabled) {
            transform: scale(0.99);
+        }
+
+        .scan-only-button {
+          width: 100%;
+          height: 48px;
+          font-weight: var(--font-semibold);
+          font-size: var(--text-base);
         }
 
         @media (prefers-color-scheme: dark) {

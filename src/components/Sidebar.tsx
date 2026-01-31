@@ -10,109 +10,127 @@
 
 import { NavLink } from 'react-router-dom';
 import {
-    LayoutDashboard,
-    FileText,
-    Activity,
-    Package,
-    Globe,
-    HeartPulse,
-    Settings,
-    ChevronLeft,
-    ChevronRight,
-    LogOut,
+  LayoutDashboard,
+  FileText,
+  Activity,
+  Package,
+  Globe,
+  HeartPulse,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
 } from 'lucide-react';
 import { useUI, useConnection, usePartyLens } from '../services/store';
 import PartySelector from './PartySelector';
 
 const navItems = [
-    { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/contracts', label: 'Contracts', icon: FileText },
-    { path: '/transactions', label: 'Transactions', icon: Activity },
-    { path: '/templates', label: 'Templates', icon: Package },
-    { path: '/explorer', label: 'Scan Explorer', icon: Globe },
-    { path: '/health', label: 'Node Health', icon: HeartPulse },
+  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/contracts', label: 'Contracts', icon: FileText },
+  { path: '/transactions', label: 'Transactions', icon: Activity },
+  { path: '/templates', label: 'Templates', icon: Package },
+  { path: '/explorer', label: 'Scan Explorer', icon: Globe },
+  { path: '/health', label: 'Node Health', icon: HeartPulse },
 ];
 
 export function Sidebar() {
-    const { sidebarOpen, toggleSidebar } = useUI();
-    const { status, disconnect } = useConnection();
-    const { activeParty } = usePartyLens();
+  const { sidebarOpen, toggleSidebar } = useUI();
+  const { status, disconnect } = useConnection();
+  const { activeParty } = usePartyLens();
 
-    return (
-        <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
-            {/* Logo */}
-            <div className="sidebar-header">
-                <div className="logo">
-                    <img
-                        src="https://www.canton.network/hubfs/canton-logo-black.svg"
-                        alt="Canton"
-                        className="logo-image"
-                    />
-                    {sidebarOpen && <span className="logo-text">LedgerView</span>}
-                </div>
-                <button
-                    className="btn btn-icon btn-ghost collapse-btn"
-                    onClick={toggleSidebar}
-                    aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-                >
-                    {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
-                </button>
-            </div>
+  return (
+    <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
+      {/* Logo */}
+      <div className="sidebar-header">
+        <div className="logo">
+          <img
+            src="https://www.canton.network/hubfs/canton-logo-black.svg"
+            alt="Canton"
+            className="logo-image"
+          />
+          {sidebarOpen && <span className="logo-text">LedgerView</span>}
+        </div>
+        <button
+          className="btn btn-icon btn-ghost collapse-btn"
+          onClick={toggleSidebar}
+          aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+        >
+          {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+        </button>
+      </div>
 
-            {/* Party Selector */}
-            {sidebarOpen && activeParty && (
-                <div className="sidebar-party">
-                    <PartySelector />
-                </div>
+      {/* Party Selector */}
+      {sidebarOpen && activeParty && (
+        <div className="sidebar-party">
+          <PartySelector />
+        </div>
+      )}
+
+      {/* Navigation */}
+      <nav className="sidebar-nav">
+        {navItems.map(({ path, label, icon: Icon }) => (
+          <NavLink
+            key={path}
+            to={path}
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            title={label}
+          >
+            <Icon className="nav-item-icon" size={20} />
+            {sidebarOpen && <span className="nav-item-label">{label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Footer */}
+      <div className="sidebar-footer">
+        {status.connected ? (
+          <div className="connection-indicator">
+            <div className="connection-dot connected" />
+            {sidebarOpen && (
+              <span className="connection-text truncate">
+                {new URL(status.endpoint).host}
+              </span>
             )}
+          </div>
+        ) : (
+          <div className="connection-indicator">
+            <div className="connection-dot disconnected" />
+            {sidebarOpen && (
+              <span className="connection-text">Disconnected</span>
+            )}
+          </div>
+        )}
 
-            {/* Navigation */}
-            <nav className="sidebar-nav">
-                {navItems.map(({ path, label, icon: Icon }) => (
-                    <NavLink
-                        key={path}
-                        to={path}
-                        className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-                        title={label}
-                    >
-                        <Icon className="nav-item-icon" size={20} />
-                        {sidebarOpen && <span className="nav-item-label">{label}</span>}
-                    </NavLink>
-                ))}
-            </nav>
+        {sidebarOpen && (
+          <div className="sidebar-actions">
+            <NavLink to="/settings" className="nav-item" title="Settings">
+              <Settings size={20} />
+              <span className="nav-item-label">Settings</span>
+            </NavLink>
+            {status.connected ? (
+              <button
+                className="nav-item disconnect-btn"
+                onClick={disconnect}
+                title="Disconnect"
+              >
+                <LogOut size={20} />
+                <span className="nav-item-label">Disconnect</span>
+              </button>
+            ) : (
+              <NavLink
+                to="/connect"
+                className="nav-item connect-btn"
+                title="Connect"
+              >
+                <LogOut size={20} className="rotate-180" />
+                <span className="nav-item-label">Connect</span>
+              </NavLink>
+            )}
+          </div>
+        )}
+      </div>
 
-            {/* Footer */}
-            <div className="sidebar-footer">
-                {status.connected && (
-                    <div className="connection-indicator">
-                        <div className="connection-dot connected" />
-                        {sidebarOpen && (
-                            <span className="connection-text truncate">
-                                {new URL(status.endpoint).host}
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                {sidebarOpen && (
-                    <div className="sidebar-actions">
-                        <NavLink to="/settings" className="nav-item" title="Settings">
-                            <Settings size={20} />
-                            <span className="nav-item-label">Settings</span>
-                        </NavLink>
-                        <button
-                            className="nav-item disconnect-btn"
-                            onClick={disconnect}
-                            title="Disconnect"
-                        >
-                            <LogOut size={20} />
-                            <span className="nav-item-label">Disconnect</span>
-                        </button>
-                    </div>
-                )}
-            </div>
-
-            <style>{`
+      <style>{`
         .sidebar {
           width: var(--sidebar-width);
           background: var(--bg-secondary);
@@ -238,13 +256,25 @@ export function Sidebar() {
           color: var(--color-error-500);
         }
 
-        /* Dark mode logo invert */
         [data-theme='dark'] .logo-image {
           filter: invert(1);
         }
+
+        .connect-btn {
+          color: var(--color-success-500);
+        }
+
+        .connect-btn:hover {
+          background: rgba(34, 197, 94, 0.1);
+          color: var(--color-success-500);
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
       `}</style>
-        </aside>
-    );
+    </aside>
+  );
 }
 
 export default Sidebar;

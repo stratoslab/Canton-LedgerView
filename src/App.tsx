@@ -24,7 +24,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const isConnected = useLedgerStore((state) => state.status.connected);
 
     if (!isConnected) {
-        return <Navigate to="/connect" replace />;
+        return <Navigate to="/explorer" replace />;
     }
 
     return <>{children}</>;
@@ -57,6 +57,11 @@ export function App() {
                     }
                 />
 
+                {/* Explorer (public) */}
+                <Route path="/explorer" element={<Layout />}>
+                    <Route index element={<ScanExplorer />} />
+                </Route>
+
                 {/* Main Application (protected) */}
                 <Route
                     path="/"
@@ -72,7 +77,6 @@ export function App() {
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="transactions/:updateId" element={<div>Transaction Detail (TODO)</div>} />
                     <Route path="templates" element={<Templates />} />
-                    <Route path="explorer" element={<ScanExplorer />} />
                     <Route path="health" element={<NodeHealth />} />
                     <Route path="settings" element={<div>Settings (TODO)</div>} />
                 </Route>
