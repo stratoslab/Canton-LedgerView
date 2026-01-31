@@ -85,7 +85,7 @@ export function createScanClient(baseUrl: string): ScanClient {
 // ============================================================================
 
 const CANTON_SCAN_BASE_URL = 'https://www.cantonscan.com';
-const CORS_PROXY = 'https://corsproxy.io/?';
+const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
 async function cantonScanRequest<T>(path: string): Promise<T> {
     const targetUrl = `${CANTON_SCAN_BASE_URL}${path}`;

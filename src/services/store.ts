@@ -462,6 +462,25 @@ export const useLedgerStore = create<StoreState>()(
         }),
         {
             name: 'ledgerview-storage',
+            version: 1,
+            migrate: (persistedState: any, version) => {
+                if (version === 0) {
+                    // Fix broken default URL from previous version
+                    const defaultUrl = 'https://scan.sv-1.global.canton.network.sync.global/api/scan';
+                    const brokenUrl = 'https://scan.bs.amulet.global/api/scan';
+
+                    if (persistedState.scanConfig?.url === brokenUrl) {
+                        return {
+                            ...persistedState,
+                            scanConfig: {
+                                ...persistedState.scanConfig,
+                                url: defaultUrl,
+                            },
+                        };
+                    }
+                }
+                return persistedState;
+            },
             // Only persist certain fields
             partialize: (state) => ({
                 config: state.config,
